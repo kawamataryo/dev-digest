@@ -26,10 +26,11 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           prompt: |
-            /dev-trend-clipper を実行してください。
-            今日の日付でDev Digestを生成し、articles/YYYY-MM-DD.md ファイルに保存してください。
+            .claude/skills/dev-trend-clipper/SKILL.md を読んで、その指示に従ってDev Digestを生成してください。
+            今日の日付でarticles/YYYY-MM-DD.md ファイルに保存してください。
           claude_args: |
             --allowedTools Edit,Read,Write,Bash,WebFetch
+            --max-turns 50
 
       - name: Commit and Push changes
         run: |
