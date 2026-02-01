@@ -1,10 +1,10 @@
 name: Daily Dev Digest
 
 on:
-  schedule:
-    # 毎朝4時（日本時間）に実行 = UTC 19:00（前日）
-    - cron: '0 19 * * *'
-  # 手動実行も可能
+  # schedule:
+  #   # 毎朝4時（日本時間）に実行 = UTC 19:00（前日）
+  #   - cron: '0 19 * * *'
+  # # 手動実行も可能
   workflow_dispatch:
 
 permissions:
