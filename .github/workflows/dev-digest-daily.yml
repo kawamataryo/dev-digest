@@ -1,0 +1,47 @@
+name: Daily Dev Digest
+
+on:
+  schedule:
+    # 毎朝4時（日本時間）に実行 = UTC 19:00（前日）
+    - cron: '0 19 * * *'
+  # 手動実行も可能
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Run Claude Code Action
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            /dev-trend-clipper を実行してください。
+            今日の日付でDev Digestを生成し、articles/YYYY-MM-DD.md ファイルに保存してください。
+          claude_args: |
+            --allowedTools Edit,Read,Write,Bash,WebFetch
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          # 変更があるかチェック
+          if [ -n "$(git status --porcelain)" ]; then
+            git add articles/
+            git commit -m "docs: add Dev Digest for $(date +%Y-%m-%d)"
+            git push origin main
+            echo "Changes committed and pushed successfully"
+          else
+            echo "No changes to commit"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
