@@ -20,6 +20,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Claude Code Action
         uses: anthropics/claude-code-action@v1
@@ -31,19 +32,14 @@ jobs:
             --allowedTools Edit,Read,Write,Bash,WebFetch
             --max-turns 50
 
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +%Y-%m-%d)" >> $GITHUB_OUTPUT
+
       - name: Commit and Push changes
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          
-          # 変更があるかチェック
-          if [ -n "$(git status --porcelain)" ]; then
-            git add articles/
-            git commit -m "docs: add Dev Digest for $(date +%Y-%m-%d)"
-            git push origin main
-            echo "Changes committed and pushed successfully"
-          else
-            echo "No changes to commit"
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "docs: add Dev Digest for ${{ steps.date.outputs.date }}"
+          file_pattern: "articles/*.md"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
