@@ -32,6 +32,11 @@ jobs:
             --allowedTools Edit,Read,Write,Bash,WebFetch
             --max-turns 50
 
+      - name: Re-setup git credentials
+        run: |
+          git config --global --unset-all http.https://github.com/.extraheader || true
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+
       - name: Get current date
         id: date
         run: echo "date=$(date +%Y-%m-%d)" >> $GITHUB_OUTPUT
