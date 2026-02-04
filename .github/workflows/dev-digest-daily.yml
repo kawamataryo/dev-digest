@@ -19,8 +19,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
         with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.head_ref }}
+          persist-credentials: true
+
 
       - name: Run Claude Code Action
         uses: anthropics/claude-code-action@v1
@@ -45,6 +46,3 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "docs: add Dev Digest for ${{ steps.date.outputs.date }}"
-          file_pattern: "articles/*.md"
-          commit_user_name: "github-actions[bot]"
-          commit_user_email: "github-actions[bot]@users.noreply.github.com"
