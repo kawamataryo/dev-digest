@@ -39,17 +39,21 @@ description: "Dev Digestを作成する"
 
 **Reddit（13サブレッド）**
 - **重要**: WebFetchツールはreddit.comをブロックするため、**Bashツールでcurlコマンドを使用**すること
-- 各サブレッドから `/hot.json?t=day&limit=10` で上位10件を取得
-- **old.reddit.com**を使用（www.reddit.comではない）
-- User-Agentヘッダーを設定: `"User-Agent: neta-trend-collector/1.0 (trend analysis tool)"`
+- **OAuth必須**: `oauth.reddit.com` を Bearer Token（refresh token grant）で呼び出す
+- 各サブレッドから `/hot?t=day&limit=10` で上位10件を取得
+- User-Agentヘッダーを設定（例）: `"User-Agent: dev-digest/1.0 (trend analysis tool)"`
 - 各記事の**タイトル、Redditコメントページの完全URL、投票数（ups）、コメント数**を取得
 - **タイトルは日本語に翻訳して出力**
 
+事前準備（環境変数）:
+- `REDDIT_CLIENT_ID`
+- `REDDIT_CLIENT_SECRET`
+- `REDDIT_REFRESH_TOKEN`
+- （任意）`REDDIT_USER_AGENT`
+
 取得例（Bashツールで実行）:
 ```bash
-curl -s -H "User-Agent: neta-trend-collector/1.0 (trend analysis tool)" \
-  "https://old.reddit.com/r/programming/hot.json?t=day&limit=10" | \
-  jq -r '.data.children[] | "\(.data.title)|\(.data.ups)|\(.data.num_comments)|https://www.reddit.com\(.data.permalink)"'
+bash .claude/skills/dev-trend-clipper/scripts/reddit_hot.sh programming 10 day
 ```
 
 データ構造:
